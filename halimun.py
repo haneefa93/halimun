@@ -1,4 +1,5 @@
 from difflib import get_close_matches
+import ogr
 import os
 import sys
 
@@ -177,10 +178,21 @@ class Halimun:
         final_hasil = np.hstack(np.array(temp_hasil))
         return (geolevel, geoname, final_hasil)
 
-    def hitung_random_point(self, desa):
+    def hitung_random_point(self, id_desa):
         """
         geometry_desa: dapet dari redis, bentuk string wkt
         """
         #TODO: hitung random point 
-        pass
+        key_hash = "geom-kelurahan-wkt"
+        kelurahan_wkt = self.rc.hget(key_hash, id_desa)
+        geom = ogr.CreateGeometryFromWkt(str(kelurahan_wkt)) 
+        envelope = geom.GetEnvelope()
+        while True:
+            #x is random longitude, y is random latitude
+            x = np.random.uniform(low=envelope[0], high=envelope[1])
+            y = np.random.uniform(low=envelope[2], high=envelope[3])
+            wkt = "POINT (%s %s)" %(x,y)
+            point = ogr.CreateGeometryFromWkt(wkt)
+            if geom.Contains(point):
+                return (x,y)
 

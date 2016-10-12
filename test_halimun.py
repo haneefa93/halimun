@@ -131,3 +131,21 @@ class TestHalimun:
         assert hasil[1] == geoname
         assert len(hasil[2]) == quantity
 
+    def test_hitung_random_point(self):
+        id_desa = "9418030011" 
+        hal = Halimun("172.19.0.11")
+        point = hal.hitung_random_point(id_desa)
+        assert len(point) == 2
+        assert isinstance(point[0], float)
+        assert isinstance(point[1], float)
+
+    def test_hitung_random_point_false(self):
+        id_desa = "111" 
+        hal = Halimun("172.19.0.11")
+        try:
+            point = hal.hitung_random_point(id_desa)
+        except AttributeError:
+            assert True
+
+
+
